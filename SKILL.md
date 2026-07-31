@@ -1,40 +1,43 @@
 ---
 name: repo-audit
-description: Audit a repository before it goes public, ships a release, or gets handed to a coding agent. Checks whether the README matches what the software actually does, whether stated rules are enforced or merely written down, and whether launch requirements are met. Use when asked to "audit this repo," "is this repo ready to go public," "is this ready to ship," "check this README," or before flipping a repo public. Reports by default; edits only when explicitly asked.
+description: Audit a repository or prepare it for an open-source release. Audit mode reports whether the README matches the code and whether stated rules are actually enforced; launch mode walks a repo to release-ready with opt-in checklist packs and README templates. Use when asked to "audit this repo," "is this repo ready to go public," "prepare this repo for release," "open-source this," "get this ready to publish," "check this README," or "what's missing before I launch this." Reports by default; writes only when explicitly asked.
 license: MIT
 compatibility: Requires read access to the repository and a shell for git and grep. Uses the GitHub CLI for repository metadata when available; degrades to local-only checks when it is not.
 metadata:
   author: Conor Bronsdon
-  tags: [audit, readme, release, documentation, agent-readiness, open-source]
+  tags: [audit, readme, release, open-source, documentation, agent-readiness, launch]
   agentskills_spec: "1.0"
 ---
 
 # Repo Audit
 
-Answer one question: **would a stranger who cloned this repo be able to use it, and is everything it claims about itself true?**
+Two jobs, one skill.
 
-Three failure modes, and most repos have all three:
+| Mode | Question it answers | Default posture |
+|---|---|---|
+| **Audit** | Is everything this repo claims about itself true? | Read-only. Reports findings. |
+| **Launch** | What stands between this repo and a release people can adopt? | Read-only until you approve a plan, then writes what you picked. |
 
-1. The README describes software that no longer exists.
-2. A rule reads like a guardrail but nothing enforces it.
-3. Launch requirements are half-applied — the ones checked at flip time get done, the ones checked never do not.
+Pick from what the user asked. "Audit this," "check this README," "is this accurate" → audit. "Prepare this for release," "I want to open-source this," "what's missing before launch" → launch. When it is ambiguous, run audit first and offer launch: you cannot plan a release around a README that is already wrong.
 
-This skill owns facts, enforcement, and policy. It does not grade prose style; pair it with a writing-quality pass rather than growing a second one here.
+This skill owns facts, enforcement, packaging, and release readiness. It does not grade prose style; see [Toolbox](#toolbox) for what to reach for instead. Do not grow a second hype-word list here.
 
 ---
 
 ## Operating Boundary
 
-- **Read-only by default.** Report findings. Do not edit, stage, commit, branch, push, or open a pull request unless explicitly asked.
-- A request to "audit" is a request for a report. A request to "fix" authorizes edits to the files named in the findings, nothing else.
+- **Read-only by default.** Report. Do not edit, stage, commit, branch, push, or open a pull request unless explicitly asked.
+- **Launch mode proposes before it writes.** Produce the plan, get approval, then create files. Never generate a dozen boilerplate files unasked.
+- A request to "audit" is a request for a report. A request to "fix," "prepare," or "apply" authorizes writing the files in the approved plan, nothing else.
 - Preserve unrelated worktree changes.
 - Never run a destructive or state-changing command to verify a claim. `--help`, `--dry-run`, and reading source are enough.
+- **Never flip a repository public.** That is the user's action, always. Report readiness; let them throw the switch.
 
 ---
 
-## Step 0: Verify you are auditing current code
+## Step 0: Verify you are looking at current code
 
-**Do this first, every time. An audit of a stale checkout is worse than no audit** — it manufactures findings that were fixed weeks ago and reports them with confidence.
+**Do this first, every time. An audit of a stale checkout is worse than no audit** — it manufactures findings that were fixed weeks ago and states them with confidence.
 
 ```bash
 git fetch -q origin && git status -sb | head -1
@@ -42,7 +45,7 @@ git fetch -q origin && git status -sb | head -1
 
 If the branch is behind, pull before reading anything. If you cannot fetch, say so under Coverage limits and treat every finding as provisional.
 
-Then check open pull requests before reporting anything as missing. A file that arrives in an open PR is not a finding.
+Then check open pull requests before calling anything missing. A file that arrives in an open PR is not a finding.
 
 ---
 
@@ -65,11 +68,19 @@ Write down what the software accepts, what it does, exactly what it returns or c
 
 **Record every source you could not inspect.** That list is a required output, not a footnote.
 
+### Identify the product shape
+
+Everything downstream depends on this. Pick one:
+
+`cli` · `library` · `service` · `framework` · `integration` · `agent-skill` · `app` · `data` · `game-or-narrative`
+
+The shape selects the README template in launch mode and decides which language gates apply in audit mode.
+
 ---
 
 ## Step 2: Audit the README against that contract
 
-The spine, in order. A missing answer is a finding — do not excuse it because a later section eventually explains it.
+The spine, in order. A missing answer is a finding. Do not excuse it because a later section eventually explains it.
 
 1. What does the software do?
 2. What exact thing does it return, generate, change, or expose?
@@ -88,9 +99,7 @@ The spine, in order. A missing answer is a finding — do not excuse it because 
 
 ### The product-shape exception
 
-These language gates assume a developer tool. **They misfire on games, narrative projects, and consumer apps**, where evocative prose is the correct README. Decide the product shape before applying them.
-
-For a non-developer product, apply the factual gates — commands work, paths exist, claims are true — and drop the literal-noun ones. A game README that opens by setting a scene is not a defect. Filing that finding costs you the reader's trust in every other finding in the report.
+These language gates assume a developer tool. **They misfire on `game-or-narrative` and `app` shapes**, where evocative prose is the correct README. For those, apply the factual gates (commands work, paths exist, claims are true) and drop the literal-noun ones. A game README that opens by setting a scene is not a defect. Filing that finding costs you the reader's trust in every other finding in the report.
 
 ---
 
@@ -98,7 +107,7 @@ For a non-developer product, apply the factual gates — commands work, paths ex
 
 **The check nothing else covers.**
 
-For every claim that something is prevented, blocked, refused, required, or guaranteed — find the mechanism. Then classify it:
+For every claim that something is prevented, blocked, refused, required, or guaranteed, find the mechanism. Then classify it:
 
 | Claim backed by | Verdict |
 |---|---|
@@ -109,7 +118,7 @@ For every claim that something is prevented, blocked, refused, required, or guar
 
 Instructions and configuration are not enforcement by themselves. A rule an agent is asked to follow is guidance, however forcefully worded.
 
-Worked example: a memory-management kit whose README states "the dream commands refuse to push." The mechanism was an instruction to a model in a command file, plus a warning at install time that printed and continued. No hook, no CI. A reader could reasonably believe pushing was impossible when it was one command away — on a tool whose entire pitch is keeping private data local.
+Worked example: a memory-management kit whose README stated "the dream commands refuse to push." The mechanism was an instruction to a model in a command file, plus an install-time warning that printed and continued. No hook, no CI. A reader could reasonably believe pushing was impossible when it was one command away, on a tool whose entire pitch is keeping private data local.
 
 **Check the scope of the mechanism, not just its existence.** A guard that scans one directory does not back a claim about the whole build. A denylist of named vendors does not back a claim of "no third-party services." When the claim is broader than the check, that gap is the finding.
 
@@ -119,51 +128,28 @@ Apply the same test to the repo's own agent rules: every "always" or "never" eit
 
 ---
 
-## Step 4: Launch requirements
+## Step 4: Choose the checklist packs
 
-**A repo-local checklist outranks this section.** If the repository ships its own launch or release checklist, read it first and treat it as the standard; these are defaults for repos that have none. Repo-local expectations beat received best practice.
+**A repo-local checklist outranks everything here.** If the repository ships its own launch or release checklist, read it first and treat it as the standard. Repo-local expectations beat received best practice. These packs are for repos that have none, or gaps theirs does not cover.
 
-Mechanically checkable:
+Packs are opt-in. Ask which apply rather than running all of them. A private internal tool does not need community health files, and an audit that files findings the user will never act on trains them to ignore the report.
 
-```bash
-gh repo view OWNER/REPO --json description,homepageUrl,repositoryTopics,licenseInfo,isPrivate
-ls LICENSE .gitattributes .github/FUNDING.yml
-```
+| Pack | File | Apply when |
+|---|---|---|
+| **Core** | [`checklists/core.md`](checklists/core.md) | Always. License, description, line endings, basic hygiene. |
+| **Open source** | [`checklists/open-source.md`](checklists/open-source.md) | The repo is going public, or already is. Contribution path, security policy, conduct, issue templates. |
+| **Release** | [`checklists/release.md`](checklists/release.md) | The repo ships versioned artifacts — tags, packages, binaries. |
+| **Agent readiness** | [`checklists/agent-readiness.md`](checklists/agent-readiness.md) | Coding agents will work in this repo, or it ships skills. |
+| **Distribution** | [`checklists/distribution.md`](checklists/distribution.md) | Anyone is meant to find it. Discovery, listings, social preview. |
+| **Safety gates** | [`checklists/safety-gates.md`](checklists/safety-gates.md) | **Mandatory before any public flip.** Leak scan, private links, content holds. |
 
-- **LICENSE present.** A public repo with no license is all-rights-reserved: nobody may legally use or fork it. P1.
-- Repository description and homepage set; topics set
-- `.gitattributes` with `* text=auto eol=lf`
-- Funding metadata on owned repositories only — **never on a fork**, where it redirects sponsorship away from the maintainer
-- Any required affiliation or independence disclaimer uses current wording. A stale disclaimer asserting a relationship that has ended is P1.
-- Social preview image
-
-### Safety gates — hard exit, not advisory
-
-Before any public flip, scan for context that should not travel. Tune the first pattern to the org, employer, and private repository names that apply:
-
-```bash
-grep -rniE "<internal-org>|<private-repo-names>" .
-grep -rniE "(api[_-]?key|secret|token|password)[\"' ]*[:=]" .
-```
-
-- Two passes, the second by different eyes than the first
-- No links to private repositories on pages that will be public — they render as 404s to everyone but the owner
-- Content-hold check: is any announcement gated on something unresolved?
-
-Any hit is P1 and blocks the flip.
+Default suggestion by intent: going public → Core + Open source + Safety gates + Distribution. Shipping a version → Core + Release. Handing to agents → Core + Agent readiness. Improving an existing public repo → Core + whatever the audit surfaced.
 
 ---
 
-## Step 5: Agent readiness
+## Step 5: Report (audit mode)
 
-- `AGENTS.md` at root — several agents read it; a repo with only `CLAUDE.md` is invisible to them
-- Rules cite their evidence: the file and line that makes them true
-- Generated files marked as generated, with the command that regenerates them
-- Skill repositories: complete `SKILL.md` frontmatter
-
----
-
-## Severity
+### Severity
 
 - **P1** — misstates behavior, hides the primary output, gives an invalid command, claims enforcement that does not exist, leaks private context, or blocks a public flip.
 - **P2** — audience, downstream use, approval boundary, prerequisite, or canonical artifact is unclear.
@@ -171,9 +157,7 @@ Any hit is P1 and blocks the flip.
 
 No numeric scores. A score invites arguing with the number instead of the finding.
 
----
-
-## Report Format
+### Format
 
 ```markdown
 ## Repo Audit — <repo>
@@ -181,6 +165,8 @@ No numeric scores. A score invites arguing with the number instead of the findin
 **Bottom line:** one sentence — could a stranger clone this and use it, and is what it claims true?
 
 **Audited at:** <sha>, <branch>, fetched <yes/no>
+**Product shape:** <shape>
+**Packs applied:** <packs>
 **Evidence checked:** the exact files, help output, tests, and configs inspected
 **Coverage limits:** what could not be verified, and why
 
@@ -200,15 +186,77 @@ Commands that would settle each unverified claim.
 
 ---
 
-## Fix Mode
+## Step 6: Launch plan (launch mode)
 
-Only when explicitly asked:
+Audit first (Steps 0 through 4), then produce a plan before writing anything.
 
-1. Complete the audit first.
-2. Fix in severity order. Do not bundle unrelated cleanup.
-3. Preserve repository-specific requirements you did not fully understand.
-4. Re-run the checks that produced each finding.
-5. Report files changed and any claim still unverified.
+### Present the plan
+
+```markdown
+## Launch Plan — <repo>
+
+**Product shape:** <shape>  ·  **Packs:** <packs>
+**Blocking now:** the P1s that must clear before this can go public
+
+### Will create
+| File | From | Why |
+|---|---|---|
+| `CONTRIBUTING.md` | `templates/CONTRIBUTING.md` | No contribution path exists |
+
+### Will rewrite
+| File | Change |
+|---|---|
+
+### Yours to do (I cannot)
+- Flip the repository public
+- Upload the social preview image (no API for it)
+- <anything needing credentials or a human decision>
+
+### Recommended, not included
+- <suggestions with the skill that does each — see Toolbox>
+```
+
+Get approval. Then write only what was approved.
+
+### README templates
+
+Match the product shape. Each is a skeleton with the sections that shape needs, not prose to paste unedited.
+
+| Shape | Template |
+|---|---|
+| `cli` | [`templates/readme/cli.md`](templates/readme/cli.md) |
+| `library` | [`templates/readme/library.md`](templates/readme/library.md) |
+| `service` | [`templates/readme/service.md`](templates/readme/service.md) |
+| `agent-skill` | [`templates/readme/agent-skill.md`](templates/readme/agent-skill.md) |
+| `app` · `game-or-narrative` | [`templates/readme/app.md`](templates/readme/app.md) |
+
+Fill them from the Step 1 contract, never from guesswork. A template section you cannot fill from evidence gets deleted, not padded.
+
+### Supporting files
+
+[`templates/`](templates/) also carries `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.gitattributes`, a pull request template, and issue forms. Copy only what the chosen packs call for.
+
+### After writing
+
+1. Re-run the audit against what you wrote. Templates make claims; verify them the same as any other.
+2. Run a prose pass (see Toolbox).
+3. Report files created, files changed, and every claim still unverified.
+
+---
+
+## Toolbox
+
+This skill deliberately stops at its edges. Where a gap needs a different tool, name it rather than half-doing the job.
+
+| Gap | Reach for |
+|---|---|
+| Prose reads like AI wrote it | [`avoid-ai-writing`](https://github.com/conorbronsdon/avoid-ai-writing) — pattern categories plus a detector engine |
+| No demo GIF, or a stale one | [`demo-gif-skill`](https://github.com/conorbronsdon/demo-gif-skill) — picks vhs or Playwright, commits a regenerable recording script |
+| A fact is copied across many docs and drifting | [`ssot-check`](https://github.com/conorbronsdon/ssot-check) — canonical-value manifest, hook, and Action |
+| The repo publishes benchmark numbers | [`eval-integrity`](https://github.com/conorbronsdon/eval-integrity) — credibility audit across seven dimensions |
+| The repo ships an agent skill that needs writing or migrating | [`agent-skill-builder`](https://github.com/conorbronsdon/agent-skill-builder) |
+| Deep README rewrite against source | [`readme-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/readme-audit) and `readme-creation` by Nnenna Ndukwe |
+| Reviewing a pull request diff | a code-review skill — this one audits repositories, not changes |
 
 ---
 
@@ -216,11 +264,11 @@ Only when explicitly asked:
 
 - **A pull request diff** → a code-review skill.
 - **Prose quality alone** → a writing-quality skill.
-- **A fact copied across many documents** → an SSOT drift checker.
-- **A benchmark repository's credibility** → a benchmark-integrity auditor.
+- **A single fact copied across documents** → an SSOT drift checker.
+- **Deciding whether to open-source at all** → that is a judgment call, not a checklist.
 
 ---
 
 ## Credit
 
-The audit structure — a severity taxonomy without numeric scores, the mandatory *Evidence checked* and *Coverage limits* sections, sources-before-README ordering, the enforcement-versus-guidance gate, and the rule that a repo-local checklist outranks generic best practice — adapts [`readme-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/readme-audit) and [`dx-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/dx-audit) by [Nnenna Ndukwe](https://github.com/nnennandukwe), used under Apache-2.0.
+The audit structure adapts [`readme-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/readme-audit) and [`dx-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/dx-audit) by [Nnenna Ndukwe](https://github.com/nnennandukwe), used under Apache-2.0: a severity taxonomy without numeric scores, the mandatory *Evidence checked* and *Coverage limits* sections, sources-before-README ordering, the enforcement-versus-guidance gate, and the rule that a repo-local checklist outranks generic best practice.

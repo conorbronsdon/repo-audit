@@ -1,0 +1,22 @@
+name: Bug report
+description: Something behaves differently than documented
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes: { label: Version }
+    validations: { required: true }
+  - type: input
+    id: platform
+    attributes: { label: OS and platform }
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: Exact steps
+      description: The precise command or input. Not a summary.
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: Expected vs actual }
+    validations: { required: true }
