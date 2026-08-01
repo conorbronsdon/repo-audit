@@ -29,6 +29,17 @@
 
 <The boundary. Prevents the most likely category error.>
 
+## What's enforced
+
+<Only if something above is described as prevented, blocked, refused, required, or guaranteed.
+ One row per claim; delete the section if there are none. An empty table reads as "nothing holds."
+ Enforced = a hook, CI job, test, validator, or type that fails closed.
+ Advisory = it warns and continues. Guidance = a sentence asking someone not to.>
+
+| Claim | Mechanism | Verdict |
+|---|---|---|
+| <the claim, worded as it appears above> | <`path:line` of the gate> | Enforced / Advisory / Guidance |
+
 ## Configuration
 
 <Flags and environment variables that change behavior. Link exhaustive reference elsewhere.>

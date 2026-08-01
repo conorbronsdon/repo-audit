@@ -1,6 +1,7 @@
 ---
 name: repo-audit
 description: Audit a repository or prepare it for an open-source release. Audit mode reports whether the README matches the code and whether stated rules are actually enforced; launch mode walks a repo to release-ready with opt-in checklist packs and README templates. Use when asked to "audit this repo," "is this repo ready to go public," "prepare this repo for release," "open-source this," "get this ready to publish," "check this README," or "what's missing before I launch this." Reports by default; writes only when explicitly asked.
+version: 0.1.0
 license: MIT
 compatibility: Requires read access to the repository and a shell for git and grep. Uses the GitHub CLI for repository metadata when available; degrades to local-only checks when it is not.
 metadata:
@@ -145,6 +146,14 @@ Packs are opt-in. Ask which apply rather than running all of them. A private int
 
 Default suggestion by intent: going public → Core + Open source + Safety gates + Distribution. Shipping a version → Core + Release. Handing to agents → Core + Agent readiness. Improving an existing public repo → Core + whatever the audit surfaced.
 
+**If a pack file is not on disk beside this one**, fetch it — a single-file install of `SKILL.md` has no `checklists/` directory:
+
+```
+https://raw.githubusercontent.com/conorbronsdon/repo-audit/main/checklists/<pack>.md
+```
+
+If the fetch fails, name the pack under Coverage limits and audit without it. Never work a pack from its title: the file is the checklist, and a pack you guessed at is a set of findings the user cannot trace to anything.
+
 ---
 
 ## Step 5: Report (audit mode)
@@ -236,6 +245,16 @@ Fill them from the Step 1 contract, never from guesswork. A template section you
 
 [`templates/`](templates/) also carries `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.gitattributes`, a pull request template, and issue forms. Copy only what the chosen packs call for.
 
+### When a template is not on disk
+
+A single-file install of `SKILL.md` has no `templates/` directory. Fetch the one you need:
+
+```
+https://raw.githubusercontent.com/conorbronsdon/repo-audit/main/templates/<path>
+```
+
+If it cannot be fetched, say which files you could not read under Coverage limits and stop short of writing them. Writing a `CONTRIBUTING.md` or a README from memory of what the template probably said produces a file the user believes was generated from a reviewed skeleton and was not.
+
 ### After writing
 
 1. Re-run the audit against what you wrote. Templates make claims; verify them the same as any other.
@@ -272,3 +291,5 @@ This skill deliberately stops at its edges. Where a gap needs a different tool, 
 ## Credit
 
 The audit structure adapts [`readme-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/readme-audit) and [`dx-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/dx-audit) by [Nnenna Ndukwe](https://github.com/nnennandukwe), used under Apache-2.0: a severity taxonomy without numeric scores, the mandatory *Evidence checked* and *Coverage limits* sections, sources-before-README ordering, the enforcement-versus-guidance gate, and the rule that a repo-local checklist outranks generic best practice.
+
+The repository records this in [`NOTICE`](NOTICE) and ships the license text at [`licenses/Apache-2.0.txt`](licenses/Apache-2.0.txt). If you redistribute this skill file on its own, carry both.

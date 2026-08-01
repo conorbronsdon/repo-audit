@@ -23,7 +23,7 @@ An agent skill with two modes.
 | **Audit** | Is everything this repo claims about itself true? | Reads your source, tests, hooks, and CI **before** your README, then reports `P1`/`P2`/`P3` findings with the evidence it checked and what it could not verify. |
 | **Launch** | What stands between this and a release people can adopt? | Audits first, proposes a plan, and on approval writes the README and supporting files your chosen checklist packs call for. |
 
-It runs in [Claude Code](https://docs.anthropic.com/en/docs/claude-code), Codex, Cursor, or any [agentskills.io](https://agentskills.io)-compatible agent. No dependencies, nothing to run in CI.
+It runs in [Claude Code](https://docs.anthropic.com/en/docs/claude-code), Codex, or any [agentskills.io](https://agentskills.io)-compatible agent that reads a skill directory. No dependencies, nothing to run in CI.
 
 ## The check that does most of the work
 
@@ -90,19 +90,23 @@ They are skeletons, filled from your code. A section that cannot be filled from 
 
 ## Install
 
+Install the whole directory. `SKILL.md` alone is not enough — launch mode reads `checklists/` and `templates/` from disk beside it.
+
 ```bash
 # Claude Code (project)
 mkdir -p .claude/skills/repo-audit && curl -fsSL \
-  https://raw.githubusercontent.com/conorbronsdon/repo-audit/main/SKILL.md \
-  -o .claude/skills/repo-audit/SKILL.md
+  https://github.com/conorbronsdon/repo-audit/archive/refs/heads/main.tar.gz \
+  | tar -xz --strip-components=1 -C .claude/skills/repo-audit
 
 # Codex
 mkdir -p .agents/skills/repo-audit && curl -fsSL \
-  https://raw.githubusercontent.com/conorbronsdon/repo-audit/main/SKILL.md \
-  -o .agents/skills/repo-audit/SKILL.md
+  https://github.com/conorbronsdon/repo-audit/archive/refs/heads/main.tar.gz \
+  | tar -xz --strip-components=1 -C .agents/skills/repo-audit
 ```
 
-Use `~/.claude/skills/` for a global install. To get the checklists and templates too, clone the repo and copy the whole directory.
+Use `~/.claude/skills/` for a global install, or `git clone` if you want history.
+
+If you install `SKILL.md` on its own anyway, the skill fetches each missing checklist and template from `raw.githubusercontent.com` at the moment it needs one, and reports the ones it could not fetch under Coverage limits rather than proceeding as if they said nothing.
 
 ## First use
 
@@ -139,7 +143,7 @@ The audit structure adapts [`readme-audit`](https://github.com/nnennandukwe/skil
 
 ## About
 
-Built by [Conor Bronsdon](https://conorbronsdon.com). I host the [Chain of Thought](https://chainofthought.show) podcast on AI infrastructure and developer tools. More tools: [ai-tools-for-creators](https://github.com/conorbronsdon/ai-tools-for-creators).
+Built by [Conor Bronsdon](https://conorbronsdon.com/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=repo-audit). I host the [Chain of Thought](https://chainofthought.show/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=repo-audit) podcast on AI infrastructure and developer tools. More tools: [ai-tools-for-creators](https://github.com/conorbronsdon/ai-tools-for-creators).
 
 ---
 
@@ -150,3 +154,5 @@ Built by [Conor Bronsdon](https://conorbronsdon.com). I host the [Chain of Thoug
 ## License
 
 MIT (see [`LICENSE`](LICENSE)).
+
+The adapted Apache-2.0 material described under [Credit](#credit) is recorded in [`NOTICE`](NOTICE), and the license it is used under is at [`licenses/Apache-2.0.txt`](licenses/Apache-2.0.txt).

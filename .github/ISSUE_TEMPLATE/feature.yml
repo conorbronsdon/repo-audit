@@ -1,0 +1,19 @@
+name: Feature request
+description: Propose a check or capability this skill does not have
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Read the Scope section of CONTRIBUTING.md first. Prose-style checks, numeric scores, and invented worked examples are out of scope by design.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What did an audit miss, or wrongly flag? Describe the situation, not the solution.
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes: { label: What you have in mind }
+  - type: textarea
+    id: alternatives
+    attributes: { label: What you tried instead }

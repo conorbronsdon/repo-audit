@@ -36,4 +36,16 @@
 
 <AuthN/AuthZ, what it trusts, what it never accepts.>
 
+## What's enforced
+
+<Only if something above is described as prevented, blocked, refused, required, or guaranteed —
+ rate limits, auth, "never accepts." One row per claim; delete the section if there are none.
+ An empty table reads as "nothing holds."
+ Enforced = a hook, CI job, test, validator, middleware, or type that fails closed.
+ Advisory = it warns and continues. Guidance = a sentence asking someone not to.>
+
+| Claim | Mechanism | Verdict |
+|---|---|---|
+| <the claim, worded as it appears above> | <`path:line` of the gate> | Enforced / Advisory / Guidance |
+
 ## License

@@ -32,4 +32,16 @@ mkdir -p .agents/skills/<name> && cp SKILL.md .agents/skills/<name>/
 
 <Where it stops, and what to reach for instead.>
 
+## What's enforced
+
+<Only if something above is described as prevented, blocked, refused, required, or guaranteed —
+ "it will not commit," "it never pushes," "it stays read-only." One row per claim; delete the
+ section if there are none. An empty table reads as "nothing holds."
+ A skill file instructing the model is Guidance, however forcefully worded. Enforced needs a
+ hook, CI job, test, or validator that fails closed. Advisory warns and continues.>
+
+| Claim | Mechanism | Verdict |
+|---|---|---|
+| <the claim, worded as it appears above> | <`path:line` of the gate> | Enforced / Advisory / Guidance |
+
 ## License
