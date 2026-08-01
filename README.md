@@ -139,7 +139,7 @@ The audit structure adapts [`readme-audit`](https://github.com/nnennandukwe/skil
 
 ## About
 
-Built by [Conor Bronsdon](https://conorbronsdon.com). I host the [Chain of Thought](https://chainofthought.show) podcast on AI infrastructure and developer tools. More tools: [ai-tools-for-creators](https://github.com/conorbronsdon/ai-tools-for-creators).
+Built by [Conor Bronsdon](https://conorbronsdon.com/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=repo-audit). I host the [Chain of Thought](https://chainofthought.show/?utm_source=github&utm_medium=referral&utm_campaign=repo-readme&utm_content=repo-audit) podcast on AI infrastructure and developer tools. More tools: [ai-tools-for-creators](https://github.com/conorbronsdon/ai-tools-for-creators).
 
 ---
 
