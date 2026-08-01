@@ -16,23 +16,23 @@ Show
 
 Type "# repo-audit ships its own audit of a public repo as the worked example"
 Enter
-Sleep 1200
-Type "sed -n '9,22p' examples/agent-memory-kit-audit.md"
+Sleep 1200ms
+Type "sed -n '7,15p' examples/agent-memory-kit-audit.md"
 Enter
-Sleep 4500
+Sleep 4500ms
 
 Type "clear" Enter
 Type "# the finding: a stated guarantee that nothing actually enforces"
 Enter
-Sleep 1200
-Type "sed -n '24,32p' examples/agent-memory-kit-audit.md"
+Sleep 1200ms
+Type "sed -n '17,21p' examples/agent-memory-kit-audit.md"
 Enter
-Sleep 5500
+Sleep 5500ms
 
 Type "clear" Enter
 Type "# a clean result is a finding too, so it is recorded"
 Enter
-Sleep 1000
-Type "sed -n '38,49p' examples/agent-memory-kit-audit.md"
+Sleep 1000ms
+Type "sed -n '33,44p' examples/agent-memory-kit-audit.md"
 Enter
-Sleep 5000
+Sleep 5000ms

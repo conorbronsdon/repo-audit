@@ -8,6 +8,10 @@ Audit a repo against its own code, or get it ready to open-source.
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![X](https://img.shields.io/badge/X-@ConorBronsdon-black?style=flat-square&logo=x)](https://x.com/ConorBronsdon)
 
+<img src="docs/demo.gif" alt="repo-audit reading its own worked example: the bottom line, a P1 finding where a stated guarantee has no mechanism behind it, and the checks that came back clean" width="800">
+
+<sub>Recorded from <a href="docs/demo.tape">docs/demo.tape</a> with <a href="https://github.com/charmbracelet/vhs">vhs</a> — re-render it when the output changes.</sub>
+
 </div>
 
 ---
