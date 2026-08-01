@@ -9,5 +9,6 @@ Always applies. Nothing here is optional for a repo anyone else will read.
 - [ ] `.gitignore` covers build output for every platform you build on — a Windows `.exe` is not matched by a bare `/name`
 - [ ] README answers the eight spine questions (SKILL.md Step 2)
 - [ ] Every command in the README verified against current help or source
+- [ ] Derived or vendored material carries the notices its upstream license requires — the license text, retained attribution, and any upstream `NOTICE`. Apache-2.0 §4 asks for a copy of the license and the notices, so a line of credit in the README satisfies neither. Check every "adapted from," "based on," and vendored file. `P1`.
 - [ ] No stale affiliation or employer disclaimer asserting a relationship that has ended. `P1`.
 - [ ] Default branch is the one you actually develop on

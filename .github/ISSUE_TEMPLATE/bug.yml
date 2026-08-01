@@ -1,0 +1,28 @@
+name: Bug report
+description: The skill behaves differently than documented
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The `version:` field in the SKILL.md you installed.
+    validations: { required: true }
+  - type: input
+    id: platform
+    attributes:
+      label: Agent and install path
+      description: Claude Code, Codex, or another agent — and whether you installed the tarball, a clone, or SKILL.md on its own.
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: Exact steps
+      description: What you asked for, and what the audited repo looked like. Not a summary.
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+      description: Quote the finding it filed, or name the one it should have filed and did not.
+    validations: { required: true }
