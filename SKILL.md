@@ -48,6 +48,18 @@ If the branch is behind, pull before reading anything. If you cannot fetch, say 
 
 Then check open pull requests before calling anything missing. **Verify each relevant PR against its diff, not its title.** A title states an intention; the diff is the only thing that says what lands. A gap an open PR actually closes is reported under *Known / in-flight* and excluded from the counts, not filed as a finding. A PR whose title promises the fix and whose diff does not deliver it is still a finding.
 
+### The tree can move while you read it
+
+A stale checkout is one failure; a checkout that changes under you is the other. Another session, or the owner working alongside the audit, can edit the working tree between Step 1 and Step 5.
+
+```bash
+git status --short && git rev-parse HEAD
+```
+
+Run that at the **end** of the audit as well as the start, and compare. If the tree is dirty or the SHA moved, pin the report to the SHA you actually read — `**Audited at:**` names that SHA — and say under Coverage limits which files changed after you read them. A finding cited at `file:line` against a line that has since moved is a finding the reader cannot check.
+
+**Uncommitted changes never reduce the counts.** Work sitting in the working tree is invisible to anyone who clones the repo, absent from a public flip, and gone on the next `git checkout`. It is not an in-flight pull request: nothing anchors it, and nobody but the current shell can see it. Report it in its own line under *Known / in-flight* — "uncommitted working-tree changes at `path` address part of P1-n; not counted, not visible to a clone" — and leave the finding at full severity until it is committed.
+
 ---
 
 ## Step 1: Establish the factual contract
@@ -115,6 +127,7 @@ For every claim that something is prevented, blocked, refused, required, or guar
 | A hook, CI job, test, validator, or type that fails closed | **Enforced.** The claim stands. |
 | A warning that prints but does not block | **Advisory.** Reword the claim. |
 | A sentence in a markdown file telling an agent or human not to do it | **Guidance.** Not enforcement. |
+| A real mechanism whose trigger depends on behavior you could not observe | **Conditional.** See below. |
 | Nothing found | **Unsupported.** P1. |
 
 Instructions and configuration are not enforcement by themselves. A rule an agent is asked to follow is guidance, however forcefully worded.
@@ -127,6 +140,17 @@ Worked example: a memory-management kit whose README stated "the dream commands 
 
 Apply the same test to the repo's own agent rules: every "always" or "never" either names the mechanism that checks it or is marked unenforced.
 
+### Conditional findings
+
+Some defects are real code on a reachable path, but whether the path is ever taken depends on something outside the repo: what an upstream API puts in an error body, what a client sends in a header, what a runtime leaves in an environment. You can demonstrate the code does the wrong thing when it is reached, and you cannot demonstrate that it is reached.
+
+Do not resolve that by guessing in either direction. Filing it as Unsupported claims a defense the repo may have; dropping it hides a defect on a path that may well be live. **File it, and carry the condition in the body.**
+
+- State the condition in one sentence: what you could not observe, and what would settle it. "Reached only if the upstream returns the token in the error payload; unverified against a live account."
+- **Severity is the impact if the condition holds**, not an average of the two cases. Downgrading to hedge buries a live defect under a wording choice.
+- Put the command or observation that would settle it under *Required verification*.
+- **List the adjacent paths you checked that were not defects.** A single conditional finding reads as the one place you happened to look. Naming the sibling handlers you traced and found clean is what tells the reader the scope of the check, and it belongs in *Verified clean*.
+
 ### The evidence bar
 
 Every verdict above is a claim about someone's repository, so every verdict carries its evidence.
@@ -135,7 +159,7 @@ Every verdict above is a claim about someone's repository, so every verdict carr
 
 **A grep miss alone does not establish Unsupported.** Your search terms carry your vocabulary, and the repo names things its own way: a guard called `verify`, a hook installed through `core.hooksPath` rather than `.git/hooks/`, a check that lives in a test file rather than a workflow. **Search by concept** — read the entry points, the CI workflows, the hooks directory, and the docs under the target's own names — before calling anything unsupported. This rule is load-bearing. Every other finding costs the reader a fix; a false Unsupported costs them a defense, because it is an accusation that they claimed something untrue.
 
-**In-flight fixes are not gaps.** Step 0 already checked open pull requests against their diffs. Anything a merged-pending diff genuinely fixes goes under *Known / in-flight* with the PR number, and does not count.
+**In-flight fixes are not gaps.** Step 0 already checked open pull requests against their diffs. Anything a merged-pending diff genuinely fixes goes under *Known / in-flight* with the PR number, and does not count. **Uncommitted working-tree changes are not in-flight fixes** — Step 0 says why, and the rule is the same at report time: they are listed, they are not subtracted.
 
 ---
 
@@ -160,9 +184,12 @@ Default suggestion by intent: going public → Core + Open source + Safety gates
 
 [`checklists/modules/`](checklists/modules/) holds narrower add-ons that most repos do not need. A module is selected by the repo's **shape**, not by the user's intent: each one states the trigger that makes it apply, and the trigger is a fact you can check from Step 1 evidence. Name the module and the trigger you observed, ask before applying it, and drop it if the answer is no. A module the user did not want produces findings they will not act on, which is how the whole report gets ignored.
 
+**When there is nobody to ask** — a subagent, a scheduled run, any audit with no interactive caller — do not invent a selection rule and do not skip the modules. Apply every module whose trigger is **objectively met** from Step 1 evidence, skip the rest, and make the choice auditable: list the applied modules with the observed trigger under *Packs applied*, and tag each finding they produced with the module that produced it. The caller who did not get asked can then discount a whole module's findings in one read instead of re-deriving which ones came from an assumption they would have declined.
+
 | Module | File | Trigger |
 |---|---|---|
-| **Self-proof** | [`modules/self-proof.md`](checklists/modules/self-proof.md) | The repo's product is a judgment — a linter, detector, auditor, scorer, or benchmark. |
+| **Self-proof** | [`modules/self-proof.md`](checklists/modules/self-proof.md) | Both: the repo's product is a judgment — a linter, detector, auditor, scorer, or benchmark — **and** the repo's own primary artifact is of the type it judges. |
+| **MCP server** | [`modules/mcp-server.md`](checklists/modules/mcp-server.md) | The repo ships an MCP server: `server.json` at root, or `@modelcontextprotocol/sdk` in dependencies. |
 | **Single source of truth** | [`modules/ssot.md`](checklists/modules/ssot.md) | The README carries two or more numerals reading as counts, prices, or versions. |
 | **Pinned knowledge** | [`modules/pinned-knowledge.md`](checklists/modules/pinned-knowledge.md) | The repo restates a third-party spec, API, pricing tier, or docs page. |
 | **Live data** | [`modules/live-data.md`](checklists/modules/live-data.md) | A workflow carries `schedule:`, or a published number is sourced from JSON. |
@@ -204,6 +231,9 @@ No numeric scores. A score invites arguing with the number instead of the findin
 **Evidence checked:** the exact files, help output, tests, and configs inspected
 **Coverage limits:** what could not be verified, and why
 
+### Verified clean
+- `path:line` What was checked and what it does correctly.
+
 ### P1
 - `path:line` Finding.
   Why it matters: ...
@@ -220,6 +250,12 @@ Commands that would settle each unverified claim.
 ```
 
 **Coverage limits can never be omitted.** An empty section is itself a claim — that everything was checked — so it has to be made deliberately. If there are no findings, say `No findings.` and still list residual risks.
+
+### Verified clean is a short list, not a victory lap
+
+*Evidence checked* says what you inspected; P1 through P3 say what is wrong. Neither can say a specific thing was inspected **and passed**, so a caller who asked about one thing and sees no finding reads the silence as "not examined." That section closes the gap.
+
+It holds two kinds of entry and nothing else: checks the caller asked for by name, and checks a reader would otherwise assume were skipped — the sibling paths behind a conditional finding, the guard that turned out to exist, the credential scan that came back empty. Everything else that passed stays out. A list of every check that succeeded is longer than the findings and buries them.
 
 ### Every finding carries a concrete fix
 
@@ -251,7 +287,7 @@ Audit first (Steps 0 through 4), then produce a plan before writing anything.
 ### Will create
 | File | From | Why |
 |---|---|---|
-| `CONTRIBUTING.md` | `templates/CONTRIBUTING.md` | No contribution path exists |
+| `CONTRIBUTING.md` | `templates/CONTRIBUTING.md` | Contribution path is README-only; GitHub links this file from the PR and issue UI |
 
 ### Will rewrite
 | File | Change |
