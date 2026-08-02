@@ -1,7 +1,10 @@
 repo-audit
 Copyright (c) 2026 Conor Bronsdon
 
-This product is licensed under the MIT License (see LICENSE).
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Section 4(d) of that license requires this NOTICE to travel with any derivative
+work that redistributes this material.
 
 It includes work adapted from:
 
@@ -10,8 +13,8 @@ It includes work adapted from:
   https://github.com/nnennandukwe/skills
   Licensed under the Apache License, Version 2.0
 
-  A copy of that license is at licenses/Apache-2.0.txt, and at
-  http://www.apache.org/licenses/LICENSE-2.0
+  That is the same license this repo uses, so the copy at LICENSE serves as
+  the required copy, as does http://www.apache.org/licenses/LICENSE-2.0
 
 What was adapted, in SKILL.md and README.md: the severity taxonomy without
 numeric scores, the mandatory "Evidence checked" and "Coverage limits"
