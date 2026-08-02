@@ -12,4 +12,4 @@ First public version. Nothing is tagged yet, so this entry describes the skill a
 - Five README templates chosen by product shape, each with a `What's enforced` table so a generated README states its mechanisms rather than earning a P1 on the next audit.
 - Reports carry `Evidence checked` and `Coverage limits`. Coverage limits cannot be omitted; an empty one is a claim that everything was checked.
 - Install pulls the whole skill directory. `SKILL.md` on its own now fetches a missing checklist or template from `raw.githubusercontent.com`, and reports what it could not fetch instead of proceeding without it.
-- `NOTICE` and `licenses/Apache-2.0.txt` record the structure adapted from Nnenna Ndukwe's Apache-2.0 work.
+- `NOTICE` records the structure adapted from Nnenna Ndukwe's Apache-2.0 work.

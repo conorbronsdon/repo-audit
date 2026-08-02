@@ -2,7 +2,7 @@
 name: repo-audit
 description: Audit a repository or prepare it for an open-source release. Audit mode reports whether the README matches the code and whether stated rules are actually enforced; launch mode walks a repo to release-ready with opt-in checklist packs and README templates. Use when asked to "audit this repo," "is this repo ready to go public," "prepare this repo for release," "open-source this," "get this ready to publish," "check this README," or "what's missing before I launch this." Reports by default; writes only when explicitly asked.
 version: 0.1.0
-license: MIT
+license: Apache-2.0
 compatibility: Requires read access to the repository and a shell for git and grep. Uses the GitHub CLI for repository metadata when available; degrades to local-only checks when it is not.
 metadata:
   author: Conor Bronsdon
@@ -46,7 +46,7 @@ git fetch -q origin && git status -sb | head -1
 
 If the branch is behind, pull before reading anything. If you cannot fetch, say so under Coverage limits and treat every finding as provisional.
 
-Then check open pull requests before calling anything missing. A file that arrives in an open PR is not a finding.
+Then check open pull requests before calling anything missing. **Verify each relevant PR against its diff, not its title.** A title describes an intention; the diff is the only thing that says what actually lands. A fix an open PR really makes is reported under *Known / in-flight*, not as a gap, and is excluded from the counts. A PR whose title promises the fix and whose diff does not deliver it is still a finding.
 
 ---
 
@@ -292,4 +292,4 @@ This skill deliberately stops at its edges. Where a gap needs a different tool, 
 
 The audit structure adapts [`readme-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/readme-audit) and [`dx-audit`](https://github.com/nnennandukwe/skills/tree/main/skills/dx-audit) by [Nnenna Ndukwe](https://github.com/nnennandukwe), used under Apache-2.0: a severity taxonomy without numeric scores, the mandatory *Evidence checked* and *Coverage limits* sections, sources-before-README ordering, the enforcement-versus-guidance gate, and the rule that a repo-local checklist outranks generic best practice.
 
-The repository records this in [`NOTICE`](NOTICE) and ships the license text at [`licenses/Apache-2.0.txt`](licenses/Apache-2.0.txt). If you redistribute this skill file on its own, carry both.
+The repository records this in [`NOTICE`](NOTICE); the license text is at [`LICENSE`](LICENSE). If you redistribute this skill file on its own, carry both.

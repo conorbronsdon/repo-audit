@@ -5,7 +5,7 @@
 Audit a repo against its own code, or get it ready to open-source.
 
 [![GitHub stars](https://img.shields.io/github/stars/conorbronsdon/repo-audit?style=social)](https://github.com/conorbronsdon/repo-audit/stargazers)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 [![X](https://img.shields.io/badge/X-@ConorBronsdon-black?style=flat-square&logo=x)](https://x.com/ConorBronsdon)
 
 <img src="docs/demo.gif" alt="repo-audit reading its own worked example: the bottom line, a P1 finding where a stated guarantee has no mechanism behind it, and the checks that came back clean" width="800">
@@ -153,6 +153,6 @@ Built by [Conor Bronsdon](https://conorbronsdon.com/?utm_source=github&utm_mediu
 
 ## License
 
-MIT (see [`LICENSE`](LICENSE)).
+Apache-2.0 (see [`LICENSE`](LICENSE)), matching the upstream this adapts. If you redistribute a derivative, §4(d) asks you to carry [`NOTICE`](NOTICE) with it.
 
-The adapted Apache-2.0 material described under [Credit](#credit) is recorded in [`NOTICE`](NOTICE), and the license it is used under is at [`licenses/Apache-2.0.txt`](licenses/Apache-2.0.txt).
+The adapted material described under [Credit](#credit) is recorded in [`NOTICE`](NOTICE). It is used under Apache-2.0, the same license this repo carries, so [`LICENSE`](LICENSE) is the copy.
