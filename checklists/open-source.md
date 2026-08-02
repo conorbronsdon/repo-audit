@@ -2,7 +2,7 @@
 
 The repo is going public, or already is. These make the difference between code someone can read and a project someone can join.
 
-- [ ] `CONTRIBUTING.md` — how to set up, what a good PR looks like, what will be rejected (`templates/CONTRIBUTING.md`)
+- [ ] A contribution path exists — how to set up, what a good PR looks like, what will be rejected — **and it lives in a file GitHub links from the PR and issue UI**: `CONTRIBUTING.md` at the root, in `.github/`, or in `docs/` (`templates/CONTRIBUTING.md`). A good Contributing section in the README is content in the wrong file, not a missing contribution path, and the finding is "move it, keep it" rather than "write one." Say which, because the second is a much larger ask and a maintainer who already wrote the content will read it as the audit not having looked.
 - [ ] `SECURITY.md` — how to report a vulnerability privately, and what response to expect (`templates/SECURITY.md`)
 - [ ] `CODE_OF_CONDUCT.md` and a real enforcement contact (`templates/CODE_OF_CONDUCT.md`)
 - [ ] Issue templates — bug, feature, question (`templates/github/ISSUE_TEMPLATE/`)

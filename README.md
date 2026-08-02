@@ -36,6 +36,7 @@ Most documentation tools grade prose. This one asks whether your claims are true
 | A hook, CI job, test, or validator that fails closed | **Enforced** — the claim stands |
 | A warning that prints but does not block | **Advisory** — reword it |
 | A sentence telling an agent not to do it | **Guidance** — not enforcement |
+| A real mechanism whose trigger you could not observe | **Conditional** — filed, with the condition in the body |
 | Nothing | **Unsupported** — `P1` |
 
 From the first repo this ran against: a memory tool whose README said *"the dream commands refuse to push."* The mechanism was an instruction to a model in a markdown file, plus an install-time warning that printed and continued. No hook, no CI. On a tool whose whole pitch is keeping private data local, a reader could reasonably believe pushing was impossible when it was one command away.
@@ -57,7 +58,9 @@ Packs are opt-in, because an audit that files findings you will never act on tea
 
 A checklist your repo already ships outranks all of these. Repo-local expectations beat received best practice.
 
-[`checklists/modules/`](checklists/modules/) adds five narrower packs picked by the repo's shape rather than your intent — each names the trigger that makes it apply, and gets offered rather than applied. [Self-proof](checklists/modules/self-proof.md) when the product is a judgment and should survive its own pass. [Single source of truth](checklists/modules/ssot.md) when a number is written in more than one file. [Pinned knowledge](checklists/modules/pinned-knowledge.md) when the repo restates someone else's spec. [Live data](checklists/modules/live-data.md) when a published number comes from a scheduled job, and the page cannot tell a successful fetch from recent data. [Evidence grading](checklists/modules/evidence-grading.md) when the repo itself ships a grader.
+[`checklists/modules/`](checklists/modules/) adds six narrower packs picked by the repo's shape rather than your intent — each names the trigger that makes it apply, and gets offered rather than applied. [Self-proof](checklists/modules/self-proof.md) when the product is a judgment *and* the repo is made of the thing it judges, so it can run on itself. [MCP server](checklists/modules/mcp-server.md) when the repo ships one, starting with whether the config block in the README resolves at all. [Single source of truth](checklists/modules/ssot.md) when a number is written in more than one file. [Pinned knowledge](checklists/modules/pinned-knowledge.md) when the repo restates someone else's spec. [Live data](checklists/modules/live-data.md) when a published number comes from a scheduled job, and the page cannot tell a successful fetch from recent data. [Evidence grading](checklists/modules/evidence-grading.md) when the repo itself ships a grader.
+
+With no interactive caller (a subagent, a scheduled run), the modules whose triggers are objectively met are applied anyway, listed with the trigger observed, and each finding is tagged with the module that produced it, so you can discount a module's whole output in one read.
 
 ## README templates
 
@@ -81,6 +84,9 @@ They are skeletons, filled from your code. A section that cannot be filled from 
 **Packs applied:** core, open-source, safety-gates
 **Evidence checked:** the exact files, help output, tests, and configs read
 **Coverage limits:** what could not be verified, and why
+
+### Verified clean
+- `path:line` What was checked and passed
 
 ### P1
 - `path:line` Finding.
@@ -133,9 +139,10 @@ The skill's Toolbox section names the tool for each gap it deliberately leaves: 
 
 ## Design notes
 
-Three guards exist because each failure happened in practice:
+Four guards exist because each failure happened in practice:
 
 - **Step 0 fetches before reading.** An audit of a stale checkout invents findings that were fixed weeks ago and states them with confidence. It also checks open pull requests before calling anything missing.
+- **Uncommitted work never offsets a finding.** A concurrent session fixed half a P1 in the working tree while an audit was running. Working-tree changes are invisible to a clone and gone on the next checkout, so they are reported separately and never subtracted. `git status` gets re-checked at the end of the audit, not only at the start.
 - **The product-shape exception.** The language gates assume a developer tool and misfire on games and consumer apps, where evocative prose is correct. Filing that finding costs the reader's trust in every other finding.
 - **Launch mode proposes before it writes.** Generating a dozen boilerplate files unasked is how a repo ends up with an unstaffed code of conduct pointing at an unattended inbox.
 

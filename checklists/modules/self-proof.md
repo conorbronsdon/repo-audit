@@ -1,8 +1,13 @@
 # Self-proof
 
-**Trigger:** the repo's product is a judgment. A linter, detector, auditor, scorer, grader, or benchmark — anything whose output is a verdict on someone else's work.
+**Trigger — both conditions, not one:**
+
+1. The repo's product is a judgment. A linter, detector, auditor, scorer, grader, or benchmark — anything whose output is a verdict on someone else's work.
+2. The repo's **own primary artifact is of the type the tool judges.** `avoid-ai-writing` lints prose and the repo is prose, so it can run on itself. A checker for social-post character limits judges social posts; its repository contains none.
 
 A tool that flags "delve" in your draft should survive its own pass. A tool that does not run on itself is asking for a trust it has not earned, and the reader has no way to tell which.
+
+**When (1) fires and (2) does not, do not run the checks below.** Every one of them assumes the tool consumes the artifact type the repo is made of, so against a repo with nothing of that type to feed it, "runs on itself in one command" is unsatisfiable rather than unmet — and filing it produces three `P1`s for a defect the maintainer cannot fix. The spirit still applies and is worth one finding at most: publish the unflattering number wherever a number is published, and state what the measurement does not cover. The mechanical checks do not.
 
 - [ ] **The tool runs on itself, in one command, with no setup.** `avoid-ai-writing` publishes `git clone … && node scripts/self-scan.js` at the top of [`PROOF.md`](https://github.com/conorbronsdon/avoid-ai-writing/blob/main/PROOF.md). A self-assessment a reader cannot reproduce is a press release. `P1`.
 - [ ] **The published result includes the unflattering number.** `PROOF.md` prints a raw score and an exempt score per file side by side, because "publishing only the flattering one is the behavior this project exists to criticize." If the tool has an escape hatch, show the score with and without it. `P1`.

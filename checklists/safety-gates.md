@@ -2,10 +2,18 @@
 
 **Mandatory before any public flip.** Any hit is `P1` and blocks the flip. These are hard exits, not advisory.
 
-- [ ] **Two-pass leak scan**, second pass by different eyes than the first. Tune to the org, employer, client, and private repo names that apply:
+- [ ] **Build the pattern, do not brainstorm it.** The names worth grepping for are the ones you would not think to type. Under a known owner they are enumerable, so start there:
 
 ```bash
-grep -rniE "<internal-org>|<employer>|<private-repo-names>" .
+gh repo list <owner> --visibility private --limit 200 --json name --jq '[.[].name] | join("|")'
+```
+
+  That alternation is the high-value half of the pattern, derived rather than remembered. Add the org, employer, and client names by hand — those are not in the list — and keep the derived half first, because a private repo name in a doc is the leak nobody guesses at. If `gh` is unavailable, say so under Coverage limits: a hand-written pattern covers what you thought of, which is not the same scan.
+
+- [ ] **Two-pass leak scan**, second pass by different eyes than the first, using the pattern above:
+
+```bash
+grep -rniE "<derived-private-repo-names>|<internal-org>|<employer>" .
 grep -rniE "(api[_-]?key|secret|token|password)[\"' ]*[:=]" .
 ```
 
@@ -18,7 +26,7 @@ git log -p | grep -niE "(api[_-]?key|secret|token|password)[\"' ]*[:=]" | head
 - [ ] **Scan the metadata, not only the files.** The two-pass scan above reads the tree; commit messages, branch names, tags, and PR and issue text are none of those. This is a real failure mode, not a hypothetical: a commit message named a private repository and summarized a private repo inventory while the tree it described was clean, so every file-level pass came back green.
 
 ```bash
-git log --format='%B' --all | grep -niE "<internal-org>|<employer>|<private-repo-names>"
+git log --format='%B' --all | grep -niE "<derived-private-repo-names>|<internal-org>|<employer>"
 git branch -a && git tag -l
 gh pr list --state all --json title,body --limit 200
 gh issue list --state all --json title,body --limit 200
