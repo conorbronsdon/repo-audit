@@ -46,7 +46,7 @@ git fetch -q origin && git status -sb | head -1
 
 If the branch is behind, pull before reading anything. If you cannot fetch, say so under Coverage limits and treat every finding as provisional.
 
-Then check open pull requests before calling anything missing. **Verify each relevant PR against its diff, not its title.** A title describes an intention; the diff is the only thing that says what actually lands. A fix an open PR really makes is reported under *Known / in-flight*, not as a gap, and is excluded from the counts. A PR whose title promises the fix and whose diff does not deliver it is still a finding.
+Then check open pull requests before calling anything missing. **Verify each relevant PR against its diff, not its title.** A title states an intention; the diff is the only thing that says what lands. A gap an open PR actually closes is reported under *Known / in-flight* and excluded from the counts, not filed as a finding. A PR whose title promises the fix and whose diff does not deliver it is still a finding.
 
 ---
 
@@ -127,6 +127,16 @@ Worked example: a memory-management kit whose README stated "the dream commands 
 
 Apply the same test to the repo's own agent rules: every "always" or "never" either names the mechanism that checks it or is marked unenforced.
 
+### The evidence bar
+
+Every verdict above is a claim about someone's repository, so every verdict carries its evidence.
+
+**Evidence is mandatory.** A verdict with no `file:line` — or no explicit "searched `X`, `Y`, `Z`, found nothing" — is not a finding, it is a guess. Reject it before it reaches the report. This applies to the clean verdicts too: "Enforced" with no cited mechanism is the same guess wearing a friendlier word.
+
+**A grep miss alone does not establish Unsupported.** Your search terms carry your vocabulary, and the repo names things its own way: a guard called `verify`, a hook installed through `core.hooksPath` rather than `.git/hooks/`, a check that lives in a test file rather than a workflow. **Search by concept** — read the entry points, the CI workflows, the hooks directory, and the docs under the target's own names — before calling anything unsupported. This rule is load-bearing. Every other finding costs the reader a fix; a false Unsupported costs them a defense, because it is an accusation that they claimed something untrue.
+
+**In-flight fixes are not gaps.** Step 0 already checked open pull requests against their diffs. Anything a merged-pending diff genuinely fixes goes under *Known / in-flight* with the PR number, and does not count.
+
 ---
 
 ## Step 4: Choose the checklist packs
@@ -146,10 +156,25 @@ Packs are opt-in. Ask which apply rather than running all of them. A private int
 
 Default suggestion by intent: going public → Core + Open source + Safety gates + Distribution. Shipping a version → Core + Release. Handing to agents → Core + Agent readiness. Improving an existing public repo → Core + whatever the audit surfaced.
 
+### Swap-in modules
+
+[`checklists/modules/`](checklists/modules/) holds narrower add-ons that most repos do not need. A module is selected by the repo's **shape**, not by the user's intent: each one states the trigger that makes it apply, and the trigger is a fact you can check from Step 1 evidence. Name the module and the trigger you observed, ask before applying it, and drop it if the answer is no. A module the user did not want produces findings they will not act on, which is how the whole report gets ignored.
+
+| Module | File | Trigger |
+|---|---|---|
+| **Self-proof** | [`modules/self-proof.md`](checklists/modules/self-proof.md) | The repo's product is a judgment — a linter, detector, auditor, scorer, or benchmark. |
+| **Single source of truth** | [`modules/ssot.md`](checklists/modules/ssot.md) | The README carries two or more numerals reading as counts, prices, or versions. |
+| **Pinned knowledge** | [`modules/pinned-knowledge.md`](checklists/modules/pinned-knowledge.md) | The repo restates a third-party spec, API, pricing tier, or docs page. |
+| **Live data** | [`modules/live-data.md`](checklists/modules/live-data.md) | A workflow carries `schedule:`, or a published number is sourced from JSON. |
+| **Evidence grading** | [`modules/evidence-grading.md`](checklists/modules/evidence-grading.md) | The repo itself ships something that grades. Its core rules are already in Steps 0, 3, and 5. |
+
+Modules also carry README sections. Where a module names one, it is a section launch mode can add for that shape — filled from evidence like any other, and left out when the repo cannot fill it.
+
 **If a pack file is not on disk beside this one**, fetch it — a single-file install of `SKILL.md` has no `checklists/` directory:
 
 ```
 https://raw.githubusercontent.com/conorbronsdon/repo-audit/main/checklists/<pack>.md
+https://raw.githubusercontent.com/conorbronsdon/repo-audit/main/checklists/modules/<module>.md
 ```
 
 If the fetch fails, name the pack under Coverage limits and audit without it. Never work a pack from its title: the file is the checklist, and a pack you guessed at is a set of findings the user cannot trace to anything.
@@ -187,11 +212,27 @@ No numeric scores. A score invites arguing with the number instead of the findin
 ### P2
 ### P3
 
+### Known / in-flight
+- Already fixed on open PR #<n>, verified against the diff. Excluded from the counts.
+
 ### Required verification
 Commands that would settle each unverified claim.
 ```
 
 **Coverage limits can never be omitted.** An empty section is itself a claim — that everything was checked — so it has to be made deliberately. If there are no findings, say `No findings.` and still list residual risks.
+
+### Every finding carries a concrete fix
+
+`Required change` names the file to edit, the guard to write, the test to add, or the sentence to reword — with the replacement wording. "Consider improving the documentation" is not a required change; it is the finding restated as advice, and it is what a reader skips. If you cannot name the change, you have not finished the finding.
+
+### Verify the report before you send it
+
+Do not trust your own earlier notes at face value. Before writing:
+
+- **Re-check every Unsupported.** Confirm a concept search actually happened, not just a grep on your own vocabulary. This is the most damaging error this skill can make.
+- **Confirm every finding carries evidence** — a `file:line`, or an explicit searched-and-found-nothing note naming what was searched. Drop any finding that does not.
+- **Re-verify each in-flight claim against the actual diff.**
+- **Check that severities follow the definitions above**, rather than from how strongly the finding is worded.
 
 ---
 

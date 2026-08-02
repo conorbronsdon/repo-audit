@@ -57,6 +57,8 @@ Packs are opt-in, because an audit that files findings you will never act on tea
 
 A checklist your repo already ships outranks all of these. Repo-local expectations beat received best practice.
 
+[`checklists/modules/`](checklists/modules/) adds five narrower packs picked by the repo's shape rather than your intent — each names the trigger that makes it apply, and gets offered rather than applied. [Self-proof](checklists/modules/self-proof.md) when the product is a judgment and should survive its own pass. [Single source of truth](checklists/modules/ssot.md) when a number is written in more than one file. [Pinned knowledge](checklists/modules/pinned-knowledge.md) when the repo restates someone else's spec. [Live data](checklists/modules/live-data.md) when a published number comes from a scheduled job, and the page cannot tell a successful fetch from recent data. [Evidence grading](checklists/modules/evidence-grading.md) when the repo itself ships a grader.
+
 ## README templates
 
 Launch mode picks by product shape, because a CLI README and a game README should not look alike.
