@@ -1,0 +1,31 @@
+{
+  "name": "repo-audit",
+  "version": "0.1.0",
+  "description": "Audit repository claims and plan an open-source release.",
+  "author": {
+    "name": "Conor Bronsdon",
+    "url": "https://github.com/conorbronsdon"
+  },
+  "homepage": "https://github.com/conorbronsdon/repo-audit",
+  "repository": "https://github.com/conorbronsdon/repo-audit",
+  "license": "Apache-2.0",
+  "keywords": [
+    "repo-audit",
+    "documentation"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Repo Audit",
+    "shortDescription": "Audit repository claims and plan an open-source release.",
+    "longDescription": "Audit repository claims and plan an open-source release. Uses the repository's canonical skill instructions and bundled resources.",
+    "developerName": "Conor Bronsdon",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Audit this repository against its own code."
+    ]
+  }
+}
