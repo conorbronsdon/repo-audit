@@ -2,6 +2,8 @@
 
 # repo-audit
 
+> **Maintenance mode.** This project is stable and receives security fixes. New features aren't planned, but issues and pull requests are still welcome.
+
 Audit a repo against its own code, or get it ready to open-source.
 
 [![GitHub stars](https://img.shields.io/github/stars/conorbronsdon/repo-audit?style=social)](https://github.com/conorbronsdon/repo-audit/stargazers)
