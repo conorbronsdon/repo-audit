@@ -320,7 +320,7 @@ Fill them from the Step 1 contract, never from guesswork. A template section you
 
 ### Supporting files
 
-[`templates/`](templates/) also carries `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.gitattributes`, a pull request template, and issue forms. Copy only what the chosen packs call for.
+[`templates/`](templates/) also carries `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `gitattributes`, a pull request template at `github/PULL_REQUEST_TEMPLATE.md`, and issue forms under `github/ISSUE_TEMPLATE/`. Those three are stored without the leading dot: write them into the target as `.gitattributes` and under `.github/`. Copy only what the chosen packs call for.
 
 ### When a template is not on disk
 

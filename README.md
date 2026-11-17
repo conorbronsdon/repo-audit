@@ -72,7 +72,7 @@ Launch mode picks by product shape, because a CLI README and a game README shoul
 
 They are skeletons, filled from your code. A section that cannot be filled from evidence gets deleted rather than padded.
 
-[`templates/`](templates/) also carries `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, a PR template, issue forms, and a `.gitattributes`.
+[`templates/`](templates/) also carries `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, a PR template and issue forms under `github/`, and a `gitattributes`. The last two are stored without the leading dot; they go into your repo as `.github/` and `.gitattributes`.
 
 ## What you get
 
