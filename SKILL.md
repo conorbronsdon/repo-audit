@@ -6,7 +6,7 @@ license: Apache-2.0
 compatibility: Requires read access to the repository and a shell for git and grep. Uses the GitHub CLI for repository metadata when available; degrades to local-only checks when it is not.
 metadata:
   author: Conor Bronsdon
-  tags: [audit, readme, release, open-source, documentation, agent-readiness, launch]
+  tags: audit readme release open-source documentation agent-readiness launch
   agentskills_spec: "1.0"
 ---
 
